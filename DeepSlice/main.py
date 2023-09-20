@@ -120,7 +120,7 @@ class DSModel:
             self.predictions
         )
 
-    def enforce_index_spacing(self, section_thickness:Union[int, float] = None, suppress = False):
+    def enforce_index_spacing(self, section_thickness:Union[int, float] = None, suppress = False, indexing_from_caudal_to_rostral:bool = True):
         """
         Space evenly according to the section indexes, if these indexes do not represent the precise order in which the sections were
         cut, this will lead to less accurate predictions. Section indexes must account for missing sections (ie, if section 3 is missing
@@ -129,6 +129,9 @@ class DSModel:
         :param section_thickness: the thickness of the sections in microns, defaults to None
         :type section_thickness: Union[int, float], optional
         """
+        if (section_thickness is not None) and not indexing_from_caudal_to_rostral:
+            section_thickness = -abs(section_thickness)
+
         voxel_size = self.config["target_volumes"][self.species]["voxel_size_microns"]
         self.predictions = spacing_and_indexing.space_according_to_index(
             self.predictions, section_thickness = section_thickness, voxel_size = voxel_size, suppress = suppress, species=self.species
